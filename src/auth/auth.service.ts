@@ -2,12 +2,11 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { SerializeService } from 'libraries/serializer/serialize';
+import { ConfigService } from 'src/config/config.service';
 import { UserDto } from 'src/user/dto/user.dto';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
@@ -66,11 +65,11 @@ export class AuthService extends SerializeService<UserEntity> {
   async getAuthResponse(user: UserDto): Promise<AuthResponseDto> {
     const access_token = await this.jwtService.signAsync(
       { id: user._id, type: 'access_token' },
-      { expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRES_IN') },
+      { expiresIn: this.configService.JWT_ACCESS_TOKEN_EXPIRES_IN },
     );
     const refresh_token = await this.jwtService.signAsync(
       { id: user._id, type: 'refresh_token' },
-      { expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRES_IN') },
+      { expiresIn: this.configService.JWT_REFRESH_TOKEN_EXPIRES_IN },
     );
 
     return {

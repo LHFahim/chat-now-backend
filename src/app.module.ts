@@ -1,26 +1,28 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+
 import { TypegooseModule } from 'nestjs-typegoose';
 import { AppService } from './app.service';
-import { validate } from './config/env.validation';
-import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from './config/config.module';
+import { ConfigService } from './config/config.service';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
+    ConfigModule,
     TypegooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_URL'),
+        uri: configService.MONGODB_URL,
       }),
       inject: [ConfigService],
     }),
-    ConfigModule.forRoot({ isGlobal: true, validate }),
-    ConfigModule,
+
     UserModule,
     AuthModule,
   ],
   controllers: [],
-  providers: [AppService, ConfigService],
+  providers: [AppService],
+  exports: [],
 })
 export class AppModule {}

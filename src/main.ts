@@ -24,8 +24,8 @@ async function bootstrap() {
   app.useGlobalPipes(validationPipe);
 
   const config = new DocumentBuilder()
-    .setTitle('Basic Project')
-    .setDescription('Basic Project API description')
+    .setTitle('Chat now backend')
+    .setDescription('Chat now backend API description')
     .addBearerAuth({
       description: 'JWT Token',
       type: 'http',
@@ -33,7 +33,7 @@ async function bootstrap() {
       bearerFormat: 'JWT',
     })
     .setVersion('1.0')
-    .addTag('Basic Project')
+    .addTag('Chat now backend')
     .build();
   const document = SwaggerModule.createDocument(app, config);
 
@@ -49,7 +49,7 @@ async function bootstrap() {
       defaultModelExpandDepth: 8,
       defaultModelsExpandDepth: 8,
     },
-    customSiteTitle: 'Basic Project API Docs',
+    customSiteTitle: 'Chat now backend API Docs',
   });
 
   await app.listen(5000);

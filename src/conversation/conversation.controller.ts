@@ -6,9 +6,11 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Serialize } from 'libraries/serializer/serializer.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Routes } from 'src/common/constant/routes';
 import { UserId } from 'src/common/decorator/user.decorator';
 import { APIVersions } from 'src/common/enum/api-versions.enum';
@@ -21,6 +23,8 @@ import {
 
 @ApiTags('Conversation')
 @Serialize()
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller({ path: ControllersEnum.Conversation, version: APIVersions.V1 })
 export class ConversationController {
   constructor(private readonly conversationService: ConversationService) {}

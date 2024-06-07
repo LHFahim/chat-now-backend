@@ -3,5 +3,5 @@ export enum ControllersEnum {
   Users = 'users',
   Profile = 'profile',
   Conversation = 'conversations',
-  Messages = 'messages',
+  Message = 'messages',
 }

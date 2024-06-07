@@ -17,7 +17,6 @@ export class ConversationEntity extends DocumentWithTimeStamps {
   @Type(() => UserEntity)
   @ApiProperty({ required: false })
   @Prop({ required: false, type: UserEntity, ref: () => UserEntity })
-  // @IsArray({ message: 'Participants must be an array', each: true })
   participants: Ref<UserEntity>[];
 
   @Expose()

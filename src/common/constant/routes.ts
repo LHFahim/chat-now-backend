@@ -24,8 +24,8 @@ export const Routes = {
     updateOneConversation: ':id',
     deleteOneConversation: ':id',
   },
-  [ControllersEnum.Messages]: {
-    addMessage: '',
+  [ControllersEnum.Message]: {
+    addMessage: ':conversationId',
     findAllMessages: '',
     findOneMessage: ':id',
     updateOneMessage: ':id',

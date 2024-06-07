@@ -34,14 +34,14 @@ export class MessageEntity extends DocumentWithTimeStamps {
   @Type(() => ConversationEntity)
   @ApiProperty({ required: true, type: [ConversationEntity] })
   @Prop({ required: true, ref: () => ConversationEntity })
-  conversation: Ref<ConversationEntity>;
+  conversationId: Ref<ConversationEntity>;
 
   @Expose()
   @IsMongoId()
   @Type(() => UserEntity)
   @ApiProperty({ required: true, type: [UserEntity] })
   @Prop({ required: true, ref: () => UserEntity })
-  user: Ref<UserEntity>;
+  sentBy: Ref<UserEntity>;
 
   @Expose()
   @Prop({ required: false, type: Boolean, default: true })

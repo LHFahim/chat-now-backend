@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Prop, Ref } from '@typegoose/typegoose';
 import { Expose, Type } from 'class-transformer';
-import { IsArray, IsEnum, IsMongoId } from 'class-validator';
+import { IsEnum, IsMongoId } from 'class-validator';
 import { Model } from 'libraries/mongodb/modelOptions';
 import { DocumentWithTimeStamps } from 'src/common/classes/documentWithTimeStamps';
 import { UserEntity } from 'src/user/entities/user.entity';
@@ -15,10 +15,9 @@ export enum ConversationTypeEnum {
 export class ConversationEntity extends DocumentWithTimeStamps {
   @Expose()
   @Type(() => UserEntity)
-  @IsMongoId({ each: true })
-  @ApiProperty({ required: false, type: [UserEntity] })
-  @Prop({ required: false, default: [], ref: () => UserEntity })
-  @IsArray({ message: 'Participants must be an array', each: true })
+  @ApiProperty({ required: false })
+  @Prop({ required: false, type: UserEntity, ref: () => UserEntity })
+  // @IsArray({ message: 'Participants must be an array', each: true })
   participants: Ref<UserEntity>[];
 
   @Expose()
@@ -30,7 +29,7 @@ export class ConversationEntity extends DocumentWithTimeStamps {
   @Expose()
   @IsMongoId()
   @Type(() => UserEntity)
-  @ApiProperty({ required: true, type: [UserEntity] })
+  @ApiProperty({ required: true, type: UserEntity })
   @Prop({ required: true, ref: () => UserEntity })
   createdBy: Ref<UserEntity>;
 

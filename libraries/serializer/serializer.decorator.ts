@@ -4,6 +4,7 @@ import {
   UseInterceptors,
   applyDecorators,
 } from '@nestjs/common';
+import { Transform } from 'class-transformer';
 
 export const Serialize = () =>
   applyDecorators(
@@ -15,3 +16,9 @@ export const Serialize = () =>
       exposeDefaultValues: true,
     }),
   );
+
+export const ObjectID = () => (target: any, propertyKey: string) => {
+  Transform((value) => {
+    return value.obj[value.key]?.toString() || '';
+  })(target, propertyKey);
+};

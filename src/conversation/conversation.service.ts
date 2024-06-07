@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { SerializeService } from 'libraries/serializer/serialize';
 import { InjectModel } from 'nestjs-typegoose';
 import {
   ConversationDto,
+  ConversationQuery,
   CreateConversationDto,
-  UpdateConversationDto,
 } from './dto/conversation.dto';
 import {
   ConversationEntity,
@@ -74,19 +74,54 @@ export class ConversationService extends SerializeService<ConversationEntity> {
     return this.toJSON(resData, ConversationDto);
   }
 
-  findAll() {
-    return `This action returns all conversation`;
+  async findAllConversations(userId: string, query: ConversationQuery) {
+    const docs = await this.conversationModel
+      .find({
+        participants: { $in: [userId] },
+      })
+      .sort({ [query.sortBy]: query.sort })
+      .limit(query.pageSize)
+      .skip((query.page - 1) * query.pageSize);
+
+    const docsCount = await this.conversationModel
+      .countDocuments()
+      .sort({ [query.sortBy]: query.sort })
+      .limit(query.pageSize)
+      .skip((query.page - 1) * query.pageSize);
+
+    return {
+      items: this.toJSONs(docs, ConversationDto),
+      pagination: {
+        total: docsCount,
+        current: query.page,
+        previous: query.page === 1 ? 1 : query.page - 1,
+        next:
+          docsCount > query.page * query.pageSize ? query.page + 1 : query.page,
+      },
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} conversation`;
+  async findOneConversation(userId: string, id: string) {
+    const doc = await this.conversationModel.findOne({
+      _id: id,
+      participants: { $in: [userId] },
+    });
+    if (!doc) throw new NotFoundException('Conversation is not found');
+
+    return this.toJSON(doc, ConversationDto);
   }
 
-  update(id: number, updateConversationDto: UpdateConversationDto) {
-    return `This action updates a #${id} conversation`;
-  }
+  async deleteOneConversation(userId: string, _id: string) {
+    const doc = await this.conversationModel.findOneAndUpdate(
+      {
+        _id,
+        participants: { $in: [userId] },
+      },
+      { isDeleted: true },
+      { new: true },
+    );
+    if (!doc) throw new NotFoundException('Conversation is not found');
 
-  remove(id: number) {
-    return `This action removes a #${id} conversation`;
+    return true;
   }
 }

@@ -29,6 +29,26 @@ export class ConfigService {
   @IsString()
   @Env('JWT_REFRESH_TOKEN_EXPIRES_IN')
   JWT_REFRESH_TOKEN_EXPIRES_IN: string;
+
+  @IsDefined()
+  @IsString()
+  @Env('USER_ONE_EMAIL')
+  userOneEmail: string;
+
+  @IsDefined()
+  @IsString()
+  @Env('USER_ONE_PASSWORD')
+  userOnePassword: string;
+
+  @IsDefined()
+  @IsString()
+  @Env('USER_TWO_EMAIL')
+  userTwoEmail: string;
+
+  @IsDefined()
+  @IsString()
+  @Env('USER_TWO_PASSWORD')
+  userTwoPassword: string;
 }
 
 export const ParsedConfigs = parseEnv(ConfigService);

@@ -16,6 +16,13 @@ export class ConversationEntity extends DocumentWithTimeStamps {
   @IsArray({ message: 'Participants must be an array', each: true })
   participants: Ref<UserEntity>[];
 
+  @Expose()
+  @IsMongoId()
+  @Type(() => UserEntity)
+  @ApiProperty({ required: true, type: [UserEntity] })
+  @Prop({ required: true, ref: () => UserEntity })
+  createdBy: Ref<UserEntity>;
+
   // if i want to send messages in response
   content?: any;
 

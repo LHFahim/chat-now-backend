@@ -9,21 +9,28 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Serialize } from 'libraries/serializer/serializer.decorator';
+import { Routes } from 'src/common/constant/routes';
+import { UserId } from 'src/common/decorator/user.decorator';
 import { APIVersions } from 'src/common/enum/api-versions.enum';
 import { ControllersEnum } from 'src/common/enum/controllers.enum';
 import { ConversationService } from './conversation.service';
-import { CreateConversationDto } from './dto/create-conversation.dto';
-import { UpdateConversationDto } from './dto/update-conversation.dto';
+import {
+  CreateConversationDto,
+  UpdateConversationDto,
+} from './dto/conversation.dto';
 
-@ApiTags('Authentication')
+@ApiTags('Conversation')
 @Serialize()
 @Controller({ path: ControllersEnum.Conversation, version: APIVersions.V1 })
 export class ConversationController {
   constructor(private readonly conversationService: ConversationService) {}
 
-  @Post()
-  create(@Body() createConversationDto: CreateConversationDto) {
-    return this.conversationService.create(createConversationDto);
+  @Post(Routes[ControllersEnum.Conversation].createConversation)
+  createConversation(
+    @UserId() userId: string,
+    @Body() body: CreateConversationDto,
+  ) {
+    return this.conversationService.createConversation(userId, body);
   }
 
   @Get()

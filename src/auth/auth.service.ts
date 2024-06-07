@@ -28,6 +28,39 @@ export class AuthService extends SerializeService<UserEntity> {
     super(UserEntity);
   }
 
+  async onModuleInit() {
+    const user1 = await this.userService.findUserByEmail(
+      this.configService.userOneEmail,
+    );
+
+    const user2 = await this.userService.findUserByEmail(
+      this.configService.userTwoEmail,
+    );
+
+    if (!user1) {
+      await this.userService.createUser({
+        email: this.configService.userOneEmail,
+        password: await this.getHashedPassword(
+          this.configService.userOnePassword,
+        ),
+        firstName: 'Fahim',
+        lastName: 'Hassan',
+        phone: '',
+      });
+    }
+    if (!user2) {
+      await this.userService.createUser({
+        email: this.configService.userTwoEmail,
+        password: await this.getHashedPassword(
+          this.configService.userTwoPassword,
+        ),
+        firstName: 'Ahmed',
+        lastName: 'Rishad',
+        phone: '',
+      });
+    }
+  }
+
   async login(body: LoginDto, request: any) {
     const user = await this.userService.findUserByEmail(request.user.email);
 

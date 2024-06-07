@@ -1,11 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { CreateConversationDto } from './dto/create-conversation.dto';
-import { UpdateConversationDto } from './dto/update-conversation.dto';
+import { ReturnModelType } from '@typegoose/typegoose';
+import { SerializeService } from 'libraries/serializer/serialize';
+import { InjectModel } from 'nestjs-typegoose';
+import {
+  CreateConversationDto,
+  UpdateConversationDto,
+} from './dto/conversation.dto';
+import { ConversationEntity } from './entities/conversation.entity';
 
 @Injectable()
-export class ConversationService {
-  create(createConversationDto: CreateConversationDto) {
-    return 'This action adds a new conversation';
+export class ConversationService extends SerializeService<ConversationEntity> {
+  constructor(
+    @InjectModel(ConversationEntity)
+    private readonly conversationModel: ReturnModelType<
+      typeof ConversationEntity
+    >,
+  ) {
+    super(ConversationEntity);
+  }
+
+  async createConversation(userId: string, body: CreateConversationDto) {
+    const conversation = await this.conversationModel.create({
+      ...body,
+      createdBy: userId,
+    });
   }
 
   findAll() {

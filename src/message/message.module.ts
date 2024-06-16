@@ -9,5 +9,6 @@ import { MessageService } from './message.service';
   imports: [TypegooseModule.forFeature([MessageEntity, ConversationEntity])],
   controllers: [MessageController],
   providers: [MessageService],
+  exports: [MessageService],
 })
 export class MessageModule {}

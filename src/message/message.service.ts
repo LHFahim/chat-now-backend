@@ -30,7 +30,8 @@ export class MessageService extends SerializeService<MessageEntity> {
     body: CreateMessageDto,
   ) {
     const doc = await this.messageModel.create({
-      ...body,
+      message: body.message,
+      type: body.type,
       conversationId,
       sentBy: userId,
     });

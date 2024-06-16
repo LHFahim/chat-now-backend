@@ -2,6 +2,7 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
+  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
   WsException,
@@ -13,6 +14,8 @@ import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { ConfigService } from 'src/config/config.service';
+import { CreateMessageDto } from 'src/message/dto/create-message.dto';
+import { MessageService } from 'src/message/message.service';
 import { UserEntity } from '../user/entities/user.entity';
 
 @WebSocketGateway({
@@ -30,8 +33,9 @@ export class SocketGateway
   constructor(
     @InjectModel(UserEntity)
     private readonly userModel: ReturnModelType<typeof UserEntity>,
-    private jwtService: JwtService,
+    private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly messageService: MessageService,
   ) {}
 
   @WebSocketServer()
@@ -53,18 +57,34 @@ export class SocketGateway
 
     const token = authToken.split(' ')[1];
     const jwtSecret = this.configService.JWT_SECRET;
-    console.log('🚀 ~ handleConnection ~ jwtSecret:', jwtSecret, token);
 
     const decodedData = await this.jwtService.verifyAsync(token, {
       secret: jwtSecret,
     });
     if (!decodedData) throw new WsException('Authentication token missing');
 
-    console.log('🚀 ~ handleConnection ~ decodedData:', decodedData);
-
     client.join(decodedData.id);
 
     // client['user'] = payload;
+  }
+
+  @SubscribeMessage('sendMessage')
+  async handleMessage(
+    client: Socket,
+    payload: CreateMessageDto & {
+      conversationId: string;
+      sentBy: string;
+    },
+  ) {
+    // Store the message in the database
+    const newMessage = await this.messageService.addMessage(
+      payload.sentBy,
+      payload.conversationId,
+      { message: payload.message, type: payload.type },
+    );
+
+    // Broadcast the message to the conversation participants
+    this.server.to(payload.conversationId).emit('receiveMessage', newMessage);
   }
 
   handleDisconnect(client: Socket) {

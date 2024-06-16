@@ -52,6 +52,10 @@ async function bootstrap() {
     customSiteTitle: 'Chat now backend API Docs',
   });
 
+  app.enableCors({
+    origin: '*',
+  });
+
   await app.listen(5000);
   logger.log(`Server started on http://localhost:${PORT}/api`);
 }

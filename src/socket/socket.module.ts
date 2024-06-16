@@ -1,12 +1,15 @@
-import { Module } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from 'src/config/config.service';
-import { MessageModule } from 'src/message/message.module';
-import { SocketGateway } from './socket.gateway';
-import { SocketService } from './socket.service';
+import { Global, Module } from '@nestjs/common';
+import { TypegooseModule } from 'nestjs-typegoose';
 
+import { JwtService } from '@nestjs/jwt';
+import { AuthModule } from 'src/auth/auth.module';
+import { UserEntity } from 'src/user/entities/user.entity';
+import { SocketGateway } from './socket.gateway';
+
+@Global()
 @Module({
-  imports: [MessageModule],
-  providers: [SocketGateway, SocketService, JwtService, ConfigService],
+  imports: [TypegooseModule.forFeature([UserEntity]), AuthModule],
+  providers: [SocketGateway, JwtService],
+  exports: [SocketGateway],
 })
 export class SocketModule {}
